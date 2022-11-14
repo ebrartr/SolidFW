@@ -22,7 +22,7 @@ namespace DataAccess.Concrete.EntityFrameWork
 
         public List<Product> GetAll()
         {
-            return new List<Product> { new Product { ProductName="elma"},new Product { ProductName = "armut"} };
+            throw new NotImplementedException();
         }
 
         public List<Product> GetAllByCategory(int categoryId)
