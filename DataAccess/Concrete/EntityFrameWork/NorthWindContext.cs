@@ -12,9 +12,6 @@ namespace DataAccess.Concrete.EntityFrameWork
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=Northwind;Trusted_Connection=true");
-            //optionsBuilder.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=Northwind;Trusted_Connection=true;TrustServerCertificate=True");
-            //optionsBuilder.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=Northwind;Trusted_Connection=true");
             optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Northwind;trusted_connection=true");
         }
 
