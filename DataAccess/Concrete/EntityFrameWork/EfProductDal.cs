@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Concrete.EntityFrameWork
 {
-    internal class EfProductDal : IProductDal
+    public class EfProductDal : IProductDal
     {
         public void Add(Product entity)
         {

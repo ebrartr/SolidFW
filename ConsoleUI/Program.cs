@@ -9,7 +9,7 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            ProductManager _productManager = new ProductManager(new InMemoryProductDal());
+            ProductManager _productManager = new ProductManager(new EfProductDal());
 
             foreach (var product in _productManager.GetAll())
             {
