@@ -15,8 +15,12 @@ namespace DataAccess.Concrete.EntityFrameWork
             optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Northwind;trusted_connection=true");
         }
 
+        // Şağıdaki kodları , proje geliştiriken commentle ki örnek alrak elinde bulunsun
+
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Customer> Customers { get; set; }
+
+        public DbSet<Order> Orders { get; set; }
     }
 }
