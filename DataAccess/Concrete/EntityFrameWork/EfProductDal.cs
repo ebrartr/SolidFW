@@ -17,7 +17,20 @@ namespace DataAccess.Concrete.EntityFrameWork
     {
         public List<ProductDetailDto> GetProductDetails()
         {
-            throw new NotImplementedException();
+            using (var db = new NorthwindContext())
+            {
+                var query = from product in db.Products
+                            join category in db.Categories on product.CategoryId equals category.CategoryId
+                            select new ProductDetailDto
+                            {
+                                ProductName = product.ProductName,
+                                ProductCategory = category.CategoryName
+                            };
+
+                var result = query.ToList();
+
+                return result;
+            }
         }
     }
 }

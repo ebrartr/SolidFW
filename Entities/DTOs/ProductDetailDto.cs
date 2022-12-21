@@ -9,6 +9,7 @@ namespace Entities.DTOs
 {
     public class ProductDetailDto :IDto
     {
-
+        public string ProductName { get; set; }
+        public string ProductCategory { get; set; }
     }
 }
