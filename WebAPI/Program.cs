@@ -1,7 +1,6 @@
-using Business.Abstract;
-using Business.Concrete;
-using DataAccess.Abstract;
-using DataAccess.Concrete.EntityFrameWork;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Business.DependencyResolvers.Autofac;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +14,20 @@ builder.Services.AddSwaggerGen();
 
 // IoC Start
 
-builder.Services.AddSingleton<IProductDal, EfProductDal>();
-builder.Services.AddSingleton<IProductService, ProductManager>();
+// the default usage for .net web api are 2 rows
+//builder.Services.AddSingleton<IProductDal, EfProductDal>();
+//builder.Services.AddSingleton<IProductService, ProductManager>();
+
+
+// Autofac configuration
+
+builder.Host
+    .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+    .ConfigureContainer<ContainerBuilder>(cc => {
+
+        cc.RegisterModule(new AutofacBusinessModule());
+    });
+
 
 // IoC End
 
