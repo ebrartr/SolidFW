@@ -31,9 +31,20 @@ namespace Business.Concrete
         {
             // business codes here
 
+            var categoryCount = _productDal.GetAll(x => x.CategoryId == product.CategoryId).Count();
+
+            if (categoryCount > 10)
+                return new ErrorResult("A maximum of 10 products can be found in the same category.");
+
             _productDal.Add(product);
 
             return new SuccessResult(Messages.ProductAdded);
+        }
+
+        [ValidationAspect(typeof(ProductValidator))]
+        public IResult Update(Product product)
+        {
+            throw new NotImplementedException();
         }
 
         public IDataResult<List<Product>> GetAll()
@@ -65,5 +76,7 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductDetails());
         }
+
+       
     }
 }
