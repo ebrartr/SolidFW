@@ -17,8 +17,6 @@ namespace WebAPI.Controllers
         public ProductsController(IProductService productService)
         {
             _productService = productService;
-
-            //test...
         }
 
         [HttpGet("getall")]
