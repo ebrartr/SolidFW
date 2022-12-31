@@ -2,18 +2,10 @@
 using Business.Constants;
 using Business.ValidationRoles.FluentValidation;
 using Core.Aspects.Autofac.Validation;
-using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using DataAccess.Concrete.InMemory;
 using Entities.Concrete;
 using Entities.DTOs;
-using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
@@ -29,38 +21,37 @@ namespace Business.Concrete
         [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {
-            // business codes here
+            if (CheckIfProductCountOfCategoryCorrect(product.CategoryId).Success)
+            {
+                if (CheckIfProductNameExists(product.ProductName).Success)
+                {
+                    _productDal.Add(product);
 
-            var categoryCount = _productDal.GetAll(x => x.CategoryId == product.CategoryId).Count();
+                    return new SuccessResult(Messages.ProductAdded);
+                }
+            }
 
-            if (categoryCount > 10)
-                return new ErrorResult("A maximum of 10 products can be found in the same category.");
-
-            _productDal.Add(product);
-
-            return new SuccessResult(Messages.ProductAdded);
-
-            //test
+            return new ErrorResult();
         }
 
         [ValidationAspect(typeof(ProductValidator))]
         public IResult Update(Product product)
         {
-            var categoryCount = _productDal.GetAll(x => x.CategoryId == product.CategoryId).Count();
+            if (CheckIfProductCountOfCategoryCorrect(product.ProductId).Success)
+            {
+                if (CheckIfProductNameExists(product.ProductName).Success)
+                {
+                    _productDal.Update(product);
 
-            if (categoryCount > 10)
-                return new ErrorResult("A maximum of 10 products can be found in the same category.");
+                    return new SuccessResult(Messages.ProductUpdated);
+                }
+            }
 
-            throw new NotImplementedException();
+            return new ErrorResult();
         }
 
         public IDataResult<List<Product>> GetAll()
         {
-            //if (DateTime.Now.Hour == 11)
-            //{
-            //    return new ErrorDataResult<List<Product>>(Messages.MaintenanceTime); ;
-            //}
-
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(),Messages.ProductListed);
         }
 
@@ -84,6 +75,24 @@ namespace Business.Concrete
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductDetails());
         }
         
+        private IResult CheckIfProductCountOfCategoryCorrect(int categoryId)
+        {
+            var categoryCount = _productDal.GetAll(x => x.CategoryId == categoryId).Count();
 
+            if (categoryCount > 10)
+                return new ErrorResult(Messages.ProductCountOfCategoryError);
+
+            return new SuccessResult();
+        }
+
+        private IResult CheckIfProductNameExists(string productName)
+        {
+            var isSame = _productDal.GetAll(x => x.ProductName == productName).Any();
+
+            if (isSame)
+                return new ErrorResult(Messages.ProductNameAlreadyExists);
+
+            return new SuccessResult();
+        }
     }
 }
