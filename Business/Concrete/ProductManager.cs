@@ -2,6 +2,7 @@
 using Business.Constants;
 using Business.ValidationRoles.FluentValidation;
 using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -12,42 +13,45 @@ namespace Business.Concrete
     public class ProductManager : IProductService
     {
         IProductDal _productDal;
+        ICategoryService _categoryService;
 
-        public ProductManager(IProductDal productDal)
+        public ProductManager(IProductDal productDal, ICategoryService categoryService)
         {
             _productDal = productDal;
+            _categoryService = categoryService; 
         }
 
         [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {
-            if (CheckIfProductCountOfCategoryCorrect(product.CategoryId).Success)
-            {
-                if (CheckIfProductNameExists(product.ProductName).Success)
-                {
-                    _productDal.Add(product);
+            IResult result = BusinessRules.Run(CheckIfProductCountOfCategoryCorrect(product.CategoryId)
+                ,CheckIfProductNameExists(product.ProductName), ChekIfCatetgoryLimitExceded());
 
-                    return new SuccessResult(Messages.ProductAdded);
-                }
+            if (result != null)
+            {
+                return result;
             }
 
-            return new ErrorResult();
+            _productDal.Add(product);
+
+            return new SuccessResult(Messages.ProductAdded);
         }
 
         [ValidationAspect(typeof(ProductValidator))]
         public IResult Update(Product product)
         {
-            if (CheckIfProductCountOfCategoryCorrect(product.ProductId).Success)
-            {
-                if (CheckIfProductNameExists(product.ProductName).Success)
-                {
-                    _productDal.Update(product);
 
-                    return new SuccessResult(Messages.ProductUpdated);
-                }
+            IResult result = BusinessRules.Run(CheckIfProductCountOfCategoryCorrect(product.CategoryId)
+                , CheckIfProductNameExists(product.ProductName), ChekIfCatetgoryLimitExceded());
+
+            if (result != null)
+            {
+                return result;
             }
 
-            return new ErrorResult();
+            _productDal.Update(product);
+
+            return new SuccessResult(Messages.ProductUpdated);
         }
 
         public IDataResult<List<Product>> GetAll()
@@ -79,7 +83,7 @@ namespace Business.Concrete
         {
             var categoryCount = _productDal.GetAll(x => x.CategoryId == categoryId).Count();
 
-            if (categoryCount > 10)
+            if (categoryCount > 50)
                 return new ErrorResult(Messages.ProductCountOfCategoryError);
 
             return new SuccessResult();
@@ -91,6 +95,16 @@ namespace Business.Concrete
 
             if (isSame)
                 return new ErrorResult(Messages.ProductNameAlreadyExists);
+
+            return new SuccessResult();
+        }
+
+        private IResult ChekIfCatetgoryLimitExceded()
+        {
+            var result = _categoryService.GetAll();
+
+            if (result.Data.Count > 15)
+                return new ErrorResult("Limit exceded");
 
             return new SuccessResult();
         }

@@ -18,16 +18,10 @@ builder.Services.AddSwaggerGen();
 //builder.Services.AddSingleton<IProductDal, EfProductDal>();
 //builder.Services.AddSingleton<IProductService, ProductManager>();
 
-
 // Autofac configuration
 
-builder.Host
-    .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-    .ConfigureContainer<ContainerBuilder>(cc => {
-
-        cc.RegisterModule(new AutofacBusinessModule());
-    });
-
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacBusinessModule()));
 
 // IoC End
 
