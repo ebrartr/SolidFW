@@ -46,6 +46,11 @@ namespace Business.Concrete
         [ValidationAspect(typeof(ProductValidator))]
         public IResult Update(Product product)
         {
+            var categoryCount = _productDal.GetAll(x => x.CategoryId == product.CategoryId).Count();
+
+            if (categoryCount > 10)
+                return new ErrorResult("A maximum of 10 products can be found in the same category.");
+
             throw new NotImplementedException();
         }
 
@@ -78,7 +83,7 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductDetails());
         }
+        
 
-       
     }
 }
