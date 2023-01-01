@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace DataAccess.Concrete.EntityFramework
+namespace DataAccess.Concrete.EntityFrameWork
 {
     public class EfProductDal : EfEntityRepositroryBase<Product, NorthwindContext>, IProductDal
     {
