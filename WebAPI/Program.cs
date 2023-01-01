@@ -1,6 +1,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Business.DependencyResolvers.Autofac;
+using Core.Utilities.IoC;
 using Core.Utilities.Security.Encryption;
 using Core.Utilities.Security.JWT;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 // Authentidcation configuration start (ebrar)
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 var tokenOptions = builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
@@ -31,6 +34,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+ServiceTool.Create(builder.Services);
 
 // authentivcation cnfg end
 
@@ -40,8 +44,6 @@ builder.Services.AddSwaggerGen();
 
 
 // IoC config Start (ebrar)
-
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 // the default usage for .net web api are 2 rows
 //builder.Services.AddSingleton<IProductDal, EfProductDal>();
