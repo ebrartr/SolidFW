@@ -3,6 +3,8 @@ using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRoles.FluentValidation;
 using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Performance;
+using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
@@ -23,9 +25,15 @@ namespace Business.Concrete
             _categoryService = categoryService; 
         }
 
-        [SecuredOperation("product.add,admin")]
-        [ValidationAspect(typeof(ProductValidator))]
-        [CacheRemoveAspect("IProductService.Get")]//bellekteki tüm IProductService.Get içeren keyleri siler buna GetAll, GetById dahil zira veri değişti...
+        [SecuredOperation("product.add,admin")] // yetki kontrolü
+        [ValidationAspect(typeof(ProductValidator))] //
+        [TransactionScopeAspect]
+        [PerformanceAspect(5)]
+
+        //todo : MemoryCacheManager deki todoyyu yapmadan bu aspecti kullanma
+        //CacheRemoveAspect'de hata var  uhtemelen .net60-2.0 arasındaki farktır, 6.0 a göre fix edilecek
+        //[CacheRemoveAspect("IProductService.Get")]//IProductService.Get, IProductService.GetAll, IProductService.Get...
+
         public IResult Add(Product product)
         {
             IResult result = BusinessRules.Run(CheckIfProductCountOfCategoryCorrect(product.CategoryId)
@@ -59,7 +67,8 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ProductUpdated);
         }
 
-        [CacheAspect]
+        //[CacheAspect]
+        [PerformanceAspect(5)]
         public IDataResult<List<Product>> GetAll()
         {
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(),Messages.ProductListed);
@@ -70,7 +79,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.CategoryId == id));
         }
 
-        [CacheAspect]
+        //[CacheAspect]
         public IDataResult<Product> GetById(int productId)
         {
             return new SuccessDataResult<Product>(_productDal.Get(p => p.ProductId == productId));

@@ -17,6 +17,8 @@ namespace Core.CrossCuttingConcerns.Caching.Microsoft
         private IMemoryCache _cache;
         public MemoryCacheManager()
         {
+            throw new Exception("Please fix the todo in this class");
+
             _cache = ServiceTool.ServiceProvider.GetService<IMemoryCache>();
         }
         public T Get<T>(string key)
@@ -43,9 +45,11 @@ namespace Core.CrossCuttingConcerns.Caching.Microsoft
         {
             _cache.Remove(key);
         }
-
+        // todo : aşağıdaki yapıyı func yani cacheCollectionValues.Where(.... e .where geçilebilecek şekilde yap sadece regex ile çalışmasın aynı zamanda linq ile de çalışsın
         public void RemoveByPattern(string pattern)
         {
+            // todo : typeof(MemoryCache).GetProperty("EntriesCollection"... net6.0 da çalışmıyor. fix et ve constructuredan custom verilen exceptionu kaldır
+
             var cacheEntriesCollectionDefinition = typeof(MemoryCache).GetProperty("EntriesCollection", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var cacheEntriesCollection = cacheEntriesCollectionDefinition.GetValue(_cache) as dynamic;
             List<ICacheEntry> cacheCollectionValues = new List<ICacheEntry>();

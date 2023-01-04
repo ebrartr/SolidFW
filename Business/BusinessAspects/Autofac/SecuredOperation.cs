@@ -9,6 +9,10 @@ using Business.Constants;
 
 namespace Business.BusinessAspects.Autofac
 {
+    /// <summary>
+    /// <para>Tr : Yetki kontrolü</para>
+    /// <para>En : Auth check</para>
+    /// </summary>
     public class SecuredOperation : MethodInterception
     {
         private string[] _roles;

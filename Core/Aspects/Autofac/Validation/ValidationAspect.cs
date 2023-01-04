@@ -10,6 +10,10 @@ using FluentValidation;
 namespace Core.Aspects.Autofac.Validation
 {
 
+    /// <summary>
+    /// <para>Tr: Veri validasyonu, gönderilen paramtrelerdeki validasyonları iilgili valdator classına bakarak kontrol eder
+    /// <para>En: Validate parameters with their validator class</para>
+    /// </summary>
     public class ValidationAspect : MethodInterception
     {
         private Type _validatorType;

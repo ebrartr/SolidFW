@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,8 +18,9 @@ namespace Core.DependencyResolvers
         public void Load(IServiceCollection serviceCollection)
         {
             serviceCollection.AddMemoryCache();//Microsfts cache injection
+            serviceCollection.AddSingleton<ICacheManager, MemoryCacheManager>();//ilerde redis'e filan geçilecek oursa bu satırın değiştirilmesi yeterlidir
             serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            serviceCollection.AddSingleton<ICacheManager, MemoryCacheManager>();//ilerde redise filan geçilecek oursa bu satırın değiştirilmesi yeterlidir
+            serviceCollection.AddSingleton<Stopwatch>();
         }
     }
 }
