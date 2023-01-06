@@ -14,6 +14,7 @@ using Entities.DTOs;
 
 namespace Business.Concrete
 {
+    [SecuredOperation("admin")]
     public class ProductManager : IProductService
     {
         IProductDal _productDal;
